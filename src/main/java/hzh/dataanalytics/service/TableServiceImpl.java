@@ -3,6 +3,9 @@ package hzh.dataanalytics.service;
 import hzh.dataanalytics.entity.Table;
 import hzh.dataanalytics.repository.TableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,7 @@ public class TableServiceImpl implements TableService {
         this.counterService = counterService;
     }
 
+    @CacheEvict(cacheNames = "tables", key = "#projectId")
     @Transactional
     @Override
     public Table createTable(String projectId, String tableName) throws Exception {
@@ -47,6 +51,7 @@ public class TableServiceImpl implements TableService {
         }
     }
 
+    @Cacheable(cacheNames = "tables")
     @Override
     public List<Table> listTables(String projectId) {
         return tableRepository.findByProjectId(projectId);
